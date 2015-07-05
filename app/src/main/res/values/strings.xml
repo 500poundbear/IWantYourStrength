@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">StrengthApp</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_snapshots">Snapshots</string>
+    <string name="action_edit_group">Edit Group</string>
+    <string name="action_view_individuals">View Indiviuals</string>
+    <string name="action_edit_individual">Edit Individual</string>
+    <string name="action_view_group">View Groups</string>
+    <string name="title_activity_update_page">UpdatePage</string>
+
+    <string-array name="groups">
+        <item>Terrans</item>
+        <item>Dumbards</item>
+        <item>Dongs</item>
+        <item>Woglea</item>
+    </string-array>
+
+    <color name="gray">#d3d3d3</color>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <string-array name="country_arrays">
+        <item>Malaysia</item>
+        <item>United States</item>
+        <item>Indonesia</item>
+        <item>France</item>
+        <item>Italy</item>
+        <item>Singapore</item>
+        <item>New Zealand</item>
+        <item>India</item>
+    </string-array>
+    <string name="title_activity_edit_group">Edit Group</string>
+    <string name="title_activity_edit_individual">Edit Individual</string>
+    <string name="title_activity_snapshots">Snapshots</string>
+    <string name="title_activity_view_individuals">View Individuals</string>
+
+    <string name="button_add_new_individual">Add New</string>
+    <string name="title_activity_new_individual">New Individual</string>
+    <string name="title_activity_view_groups">View Groups</string>
+    <string name="title_activity_new_group">New Group</string>
+</resources>
