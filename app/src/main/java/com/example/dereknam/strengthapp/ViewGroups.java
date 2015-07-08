@@ -3,6 +3,7 @@ package com.example.dereknam.strengthapp;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,14 +35,16 @@ public class ViewGroups extends ActionBarActivity {
 
         ArrayAdapter<Group> adapter = new ArrayAdapter<Group>(this,android.R.layout.simple_list_item_1,
                 values);
-        ListView groupsList = (ListView)(findViewById(R.id.list_groups));
+        final ListView groupsList = (ListView)(findViewById(R.id.list_groups));
         groupsList.setAdapter(adapter);
 
         groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),"FAT "+id,Toast.LENGTH_SHORT).show();
-
+                //Toast.makeText(getApplicationContext(),"FAT "+ parent.getAdapter().getItem(position).toString(),Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(),EditGroup.class);
+                intent.putExtra("GROUP_NAME",parent.getAdapter().getItem(position).toString());
+                startActivity(intent);
             }
         });
     }

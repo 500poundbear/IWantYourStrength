@@ -66,6 +66,34 @@ public class GroupsDataSource {
 
         return groups;
     }
+    public Group getGroup(String groupName){
+
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_GROUPS, allColumns,
+                MySQLiteHelper.GROUPS_COLUMN_NAME+" = '"+groupName+"'", null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Group queriedGroup = cursorToGroup(cursor);
+        cursor.close();
+        return queriedGroup;
+    }
+    public void updateGroup(long id,String name, String description){
+
+        ContentValues updatedRow = new ContentValues();
+        updatedRow.put(MySQLiteHelper.GROUPS_COLUMN_NAME,name);
+        updatedRow.put(MySQLiteHelper.GROUPS_COLUMN_DESCRIPTION, description);
+
+        database.update(MySQLiteHelper.TABLE_GROUPS, updatedRow,
+                MySQLiteHelper.GROUPS_COLUMN_ID + id, null);
+    }
+
+    public void deleteGroup(long id){
+        database.delete(MySQLiteHelper.TABLE_GROUPS,
+                MySQLiteHelper.GROUPS_COLUMN_ID+"="+Long.toString(id),
+                null);
+
+    }
     private Group cursorToGroup(Cursor cursor){
         Group group = new Group();
         group.setId(cursor.getLong(0));
