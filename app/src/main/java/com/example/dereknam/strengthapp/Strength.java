@@ -6,6 +6,7 @@ package com.example.dereknam.strengthapp;
 public class Strength {
     private long id;
     private Group group;
+    private long group_id;
     private int current;
     private int total;
     private String timestamp;
@@ -21,6 +22,12 @@ public class Strength {
     }
     public void setGroup(Group group){
         this.group = group;
+    }
+    public long getGroup_id(){
+        return group_id;
+    }
+    public void setGroup_id(long group_id){
+        this.group_id = group_id;
     }
     public int getCurrent(){
         return current;

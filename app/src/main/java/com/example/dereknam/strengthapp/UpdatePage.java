@@ -35,9 +35,12 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
     private IndividualsDataSource individualsDataSource;
     private StatusesDataSource statusesDataSource;
     private LabelsDataSource labelsDataSource;
+    private StrengthDataSource strengthDataSource;
     ItemArrayAdapter adapter;
 
     private ArrayList<Individual> values;
+
+    private long groupId;
 
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         final NumberPicker np = (NumberPicker) findViewById(R.id.np);
@@ -57,38 +60,34 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
         setContentView(R.layout.activity_update_page);
 
         Intent intent=getIntent();
-        long groupId = Long.parseLong(intent.getStringExtra("GROUP_ID"));
+        groupId = Long.parseLong(intent.getStringExtra("GROUP_ID"));
 
         individualsDataSource = new IndividualsDataSource(this);
         statusesDataSource = new StatusesDataSource(this);
         labelsDataSource = new LabelsDataSource(this);
+        strengthDataSource = new StrengthDataSource(this);
         try{
             individualsDataSource.open();
             statusesDataSource.open();
             labelsDataSource.open();
+            strengthDataSource.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         values = individualsDataSource.getIndividualsByGroupId(groupId);
 
-        TextView currentTally = (TextView)findViewById(R.id.current_tally);
-        TextView currentTotal = (TextView)findViewById(R.id.current_total);
+        //The below code checks if there has been a strength saved. If yes, it will populate fields
 
-        currentTally.setText("Currently: x/"+values.size());
+
+
+
+         TextView currentTotal = (TextView)findViewById(R.id.current_total);
         currentTotal.setText(String.valueOf(values.size()));
 
-        final NumberPicker np = (NumberPicker) findViewById(R.id.np);
-        np.post(new Runnable() {
-            @Override
-            public void run() {
+        refreshBoard();
 
-                np.setMaxValue(values.size());
-                np.setMinValue(0);
-                np.setWrapSelectorWheel(false);
-                np.setValue(0);
-            }
-        });
+
 
 
 
@@ -124,7 +123,42 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
         getMenuInflater().inflate(R.menu.menu_update_page, menu);
         return true;
     }
+    public void refreshBoard(){
+        TextView currentTally = (TextView)findViewById(R.id.current_tally);
 
+        final Strength getLatestStrength = strengthDataSource.getLatestStrength(groupId);
+
+        final NumberPicker np = (NumberPicker) findViewById(R.id.np);
+
+        if(getLatestStrength.getId()==-1){
+            currentTally.setText("No previously saved strength.");
+            np.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    np.setMaxValue(values.size());
+                    np.setMinValue(0);
+                    np.setWrapSelectorWheel(false);
+                    np.setValue(0);
+                }
+            });
+        }else{
+            currentTally.setText("Previously: "+getLatestStrength.getCurrent()+" / "+getLatestStrength.getTotal());
+
+            np.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    np.setMaxValue(values.size());
+                    np.setMinValue(0);
+                    np.setWrapSelectorWheel(false);
+                    np.setValue(getLatestStrength.getCurrent());
+                }
+            });
+        }
+
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -138,6 +172,20 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void updateStrength(View view){
+        NumberPicker numberPicker = (NumberPicker)findViewById(R.id.np);
+        TextView currentTotal = (TextView)findViewById(R.id.current_total);
+
+        int current = numberPicker.getValue();
+        int total = Integer.parseInt(currentTotal.getText().toString());
+
+        Strength checkStrength = strengthDataSource.addNewStrength(groupId, current, total);
+        Log.d("DOOO",checkStrength.toString());
+        Log.d("DOOO",String.valueOf(checkStrength.getCurrent()));
+        Log.d("DOOO",String.valueOf(checkStrength.getTotal()));
+        Toast.makeText(getApplicationContext(),"CHANGED TO "+current+"/"+total,Toast.LENGTH_SHORT).show();
+        refreshBoard();
     }
     public void updateStatuses(View view){
         ListView lView = (ListView)findViewById(R.id.listDetail);

@@ -11,7 +11,8 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Quick Update"/>
+            android:onClick="updateStrength"
+            android:text="Update Strength"/>
         <TextView
             android:id="@+id/current_tally"
             android:layout_width="fill_parent"
