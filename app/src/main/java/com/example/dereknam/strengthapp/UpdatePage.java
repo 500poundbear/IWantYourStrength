@@ -8,24 +8,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValueChangeListener {
+
+    private ArrayList<Status> list;
+
+    /////////////TO REMOVE/////////////////////////
     private ArrayList<String> listIds;
     private ArrayList<Boolean> listAvailability;
     private ArrayList<Long> listStatusLabelId;
-    private IndividualsDataSource dataSource;
+    /////////////END OF TO REMOVE//////////////////
+
+    private IndividualsDataSource individualsDataSource;
     private StatusesDataSource statusesDataSource;
     ItemArrayAdapter adapter;
 
+    private ArrayList<Individual> values;
 
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         final NumberPicker np = (NumberPicker) findViewById(R.id.np);
@@ -47,16 +57,16 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
         Intent intent=getIntent();
         long groupId = Long.parseLong(intent.getStringExtra("GROUP_ID"));
 
-        dataSource = new IndividualsDataSource(this);
+        individualsDataSource = new IndividualsDataSource(this);
         statusesDataSource = new StatusesDataSource(this);
         try{
-            dataSource.open();
+            individualsDataSource.open();
             statusesDataSource.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        final ArrayList<Individual> values = dataSource.getIndividualsByGroupId(groupId);
+        values = individualsDataSource.getIndividualsByGroupId(groupId);
 
         TextView currentTally = (TextView)findViewById(R.id.current_tally);
         TextView currentTotal = (TextView)findViewById(R.id.current_total);
@@ -76,7 +86,21 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
             }
         });
 
-        listIds = new ArrayList<String>();
+        list = new ArrayList<Status>();
+        for(Individual x:values){
+            Status currentRecord = statusesDataSource.getLatestStatus(x.getId());
+
+            Individual queryIndividual = individualsDataSource.getIndividual(x.getId());
+            currentRecord.setIndividual(queryIndividual);
+            list.add(currentRecord);
+            Log.d("DOOO","Currently: "+currentRecord.getAccounted());
+        }
+        ArrayAdapter<Status> adapter = new StatusesAdapter(this,list);
+
+        ListView lView = (ListView)findViewById(R.id.listDetail);
+        lView.setAdapter(adapter);
+
+        /*listIds = new ArrayList<String>();
         for(Individual x:values){
             listIds.add(String.valueOf(x.getId()));
         }
@@ -94,16 +118,7 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
                 Toast.makeText(getApplicationContext(),String.valueOf(position)+" id: "+String.valueOf(id),Toast.LENGTH_SHORT).show();
 
             }
-        });
-
-        listAvailability = new ArrayList<Boolean>();
-        listStatusLabelId = new ArrayList<Long>();
-        for(Individual x:values){
-            //With ID, query latest status
-            Status latestStatus = statusesDataSource.getLatestStatus(x.getId());
-            listAvailability.add(latestStatus.getAccounted());
-            listStatusLabelId.add(latestStatus.getStatus_label_id());
-        }
+        });*/
     }
 
     @Override
@@ -130,11 +145,11 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
     public void updateStatuses(View view){
         ListView lView = (ListView)findViewById(R.id.listDetail);
 
-        listIds.set(0,String.valueOf(2));
-        adapter.notifyDataSetChanged();
-        for(String x:listIds){
+        int visibleChildCount = (lView.getLastVisiblePosition() - lView.getFirstVisiblePosition()) + 1;
 
+        for(int q=0;q<visibleChildCount;q++){
+            ToggleButton x = (ToggleButton)lView.getChildAt(q).findViewById(R.id.togglebutton);
+            Log.d("DOOO","pos: "+String.valueOf(x.isChecked()));
         }
-
     }
 }
