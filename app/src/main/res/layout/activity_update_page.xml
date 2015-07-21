@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:text="Quick Update"/>
         <TextView
+            android:id="@+id/current_tally"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Previously: 4/15"
@@ -42,18 +43,21 @@
                 android:textStyle="bold"
                 android:text="/"
                 />
-            <NumberPicker
-                android:id="@+id/np2"
+            <TextView
+                android:id="@+id/current_total"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-            </NumberPicker>
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:textSize="90sp"
+                android:gravity="center_vertical"
+                android:text="5"
+                />
         </LinearLayout>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Update"/>
+            android:text="Update"
+            android:onClick="updateStatuses" />
         <ListView
             android:id="@+id/listDetail"
             android:layout_width="fill_parent"

@@ -5,9 +5,10 @@
         android:orderInCategory="1" app:showAsAction="never" />
     <item android:id="@+id/action_view_groups" android:title="@string/action_view_group"
         android:orderInCategory="2" app:showAsAction="never" />
-    <item android:id="@+id/action_view_individual" android:title="@string/action_view_individuals"
+    <item android:id="@+id/action_view_individuals" android:title="@string/action_view_individuals"
         android:orderInCategory="3" app:showAsAction="never" />
-
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+    <item android:id="@+id/action_view_labels" android:title="@string/action_view_labels"
         android:orderInCategory="4" app:showAsAction="never" />
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="5" app:showAsAction="never" />
 </menu>

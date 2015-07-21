@@ -11,34 +11,38 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
-    public final static String EXTRA_MESSAGE = "com.example.dereknam.strengthapp.MESSAGE";
+
+    private GroupsDataSource dataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] groups = getResources().getStringArray(R.array.groups);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,groups);
+        dataSource = new GroupsDataSource(this);
+        try{
+            dataSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        final List<Group> values = dataSource.getAllGroups();
+        ArrayAdapter<Group> adapter = new ArrayAdapter<Group>(this,android.R.layout.simple_list_item_1,
+                values);
         ListView listView = (ListView) findViewById(R.id.listView) ;
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String msg="";
-                msg+=Integer.toString(position)+" ";
-                Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(getApplicationContext(),UpdatePage.class);
-                String extra_message = Integer.toString(position);
-
-                intent.putExtra(EXTRA_MESSAGE,extra_message);
+                intent.putExtra("GROUP_ID",String.valueOf(values.get(position).getId()));
 
                 startActivity(intent);
             }
@@ -77,8 +81,12 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
                 
                 break;
-            case R.id.action_view_individual:
+            case R.id.action_view_individuals:
                 intent = new Intent(this,ViewIndividuals.class);
+                startActivity(intent);
+                break;
+            case R.id.action_view_labels:
+                intent = new Intent(this,ViewLabels.class);
                 startActivity(intent);
                 break;
         }

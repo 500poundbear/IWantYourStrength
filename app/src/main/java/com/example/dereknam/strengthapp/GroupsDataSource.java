@@ -66,6 +66,18 @@ public class GroupsDataSource {
 
         return groups;
     }
+    public Group getGroup(long id){
+
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_GROUPS, allColumns,
+                MySQLiteHelper.GROUPS_COLUMN_ID+" = '"+Long.toString(id)+"'", null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Group queriedGroup = cursorToGroup(cursor);
+        cursor.close();
+        return queriedGroup;
+    }
     public Group getGroup(String groupName){
 
 
@@ -85,7 +97,7 @@ public class GroupsDataSource {
         updatedRow.put(MySQLiteHelper.GROUPS_COLUMN_DESCRIPTION, description);
 
         database.update(MySQLiteHelper.TABLE_GROUPS, updatedRow,
-                MySQLiteHelper.GROUPS_COLUMN_ID + id, null);
+                MySQLiteHelper.GROUPS_COLUMN_ID+"=" + id, null);
     }
 
     public void deleteGroup(long id){

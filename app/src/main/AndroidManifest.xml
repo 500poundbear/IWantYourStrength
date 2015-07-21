@@ -27,10 +27,10 @@
         <activity
             android:name=".EditIndividual"
             android:label="@string/title_activity_edit_individual"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".ViewIndividuals" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.dereknam.strengthapp.MainActivity" />
+                android:value="com.example.dereknam.strengthapp.EditIndividual" />
         </activity>
         <activity
             android:name=".Snapshots"
@@ -79,6 +79,22 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.dereknam.strengthapp.ViewGroups" />
+        </activity>
+        <activity
+            android:name=".ViewLabels"
+            android:label="@string/title_activity_view_labels"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dereknam.strengthapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".NewLabel"
+            android:label="@string/title_activity_new_label"
+            android:parentActivityName=".ViewLabels" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dereknam.strengthapp.ViewLabels" />
         </activity>
     </application>
 

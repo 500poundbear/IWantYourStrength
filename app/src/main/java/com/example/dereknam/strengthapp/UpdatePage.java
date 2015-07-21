@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 
 public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValueChangeListener {
-
+    ArrayList<String> labels;
     private ArrayList<Status> list;
 
     /////////////TO REMOVE/////////////////////////
@@ -33,6 +34,7 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
 
     private IndividualsDataSource individualsDataSource;
     private StatusesDataSource statusesDataSource;
+    private LabelsDataSource labelsDataSource;
     ItemArrayAdapter adapter;
 
     private ArrayList<Individual> values;
@@ -59,9 +61,11 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
 
         individualsDataSource = new IndividualsDataSource(this);
         statusesDataSource = new StatusesDataSource(this);
+        labelsDataSource = new LabelsDataSource(this);
         try{
             individualsDataSource.open();
             statusesDataSource.open();
+            labelsDataSource.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -86,39 +90,32 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
             }
         });
 
+
+
         list = new ArrayList<Status>();
         for(Individual x:values){
             Status currentRecord = statusesDataSource.getLatestStatus(x.getId());
 
             Individual queryIndividual = individualsDataSource.getIndividual(x.getId());
             currentRecord.setIndividual(queryIndividual);
+
+            Label queryLabel = labelsDataSource.getLabel(currentRecord.getStatus_label_id());
+            currentRecord.setLabel(queryLabel);
+
             list.add(currentRecord);
-            Log.d("DOOO","Currently: "+currentRecord.getAccounted());
         }
-        ArrayAdapter<Status> adapter = new StatusesAdapter(this,list);
+        ArrayList<Label> getAllLabels = labelsDataSource.getAllLabels();
+        labels = new ArrayList<String>();
+
+        for(Label x:getAllLabels){
+            labels.add(x.getLabel());
+        }
+
+        ArrayAdapter<Status> adapter = new StatusesAdapter(this,list,labels);
 
         ListView lView = (ListView)findViewById(R.id.listDetail);
         lView.setAdapter(adapter);
 
-        /*listIds = new ArrayList<String>();
-        for(Individual x:values){
-            listIds.add(String.valueOf(x.getId()));
-        }
-
-        //instantiate custom adapter
-        adapter = new ItemArrayAdapter(listIds, this);
-
-        //handle listview and assign adapter
-        ListView lView = (ListView)findViewById(R.id.listDetail);
-        lView.setAdapter(adapter);
-
-        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),String.valueOf(position)+" id: "+String.valueOf(id),Toast.LENGTH_SHORT).show();
-
-            }
-        });*/
     }
 
     @Override
@@ -149,7 +146,29 @@ public class UpdatePage extends ActionBarActivity implements NumberPicker.OnValu
 
         for(int q=0;q<visibleChildCount;q++){
             ToggleButton x = (ToggleButton)lView.getChildAt(q).findViewById(R.id.togglebutton);
-            Log.d("DOOO","pos: "+String.valueOf(x.isChecked()));
+            Spinner y = (Spinner)lView.getChildAt(q).findViewById(R.id.spinner);
+
+            Boolean originalCheck = list.get(q).getAccounted();
+            Boolean possiblyAlteredCheck = x.isChecked();
+
+            String possiblyAlteredLabel=y.getSelectedItem().toString();
+            String originalLabel = list.get(q).getLabel().getLabel();
+            if(originalCheck != possiblyAlteredCheck || !originalLabel.equals(possiblyAlteredLabel)  ){
+                /*Log.d("DOOO","Hey at index "+q+" the value has changed");
+                Log.d("DOOO",list.get(q).getLabel().getLabel());
+                Log.d("DOOO",y.getSelectedItem().toString());
+                */
+
+                /* If this triggers, create a new status*/
+                Status oldStatus = list.get(q);
+
+                //find id in database
+
+                statusesDataSource.addNewStatus(oldStatus.getIndividual_id(),
+                        labelsDataSource.getIdOfLabel(possiblyAlteredLabel),
+                        possiblyAlteredCheck);
+
+            }
         }
     }
 }

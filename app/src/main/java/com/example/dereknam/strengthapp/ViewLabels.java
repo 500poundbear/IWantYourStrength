@@ -1,60 +1,48 @@
 package com.example.dereknam.strengthapp;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ViewIndividuals extends ActionBarActivity {
-    private IndividualsDataSource dataSource;
+public class ViewLabels extends ActionBarActivity {
+
+    private LabelsDataSource dataSource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_individuals);
+        setContentView(R.layout.activity_view_labels);
 
-        dataSource = new IndividualsDataSource(this);
+        dataSource = new LabelsDataSource(this);
         try{
             dataSource.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        final ArrayList<Individual> values = dataSource.getAllIndividuals();
+        ArrayList<Label> values = dataSource.getAllLabels();
 
-        final IndividualsAdapter adapter = new IndividualsAdapter(this, values);
+        final LabelsAdapter adapter = new LabelsAdapter(this, values);
 
-        final ListView individualsList = (ListView)(findViewById(R.id.list_individuals));
-        individualsList.setAdapter(adapter);
-
-        individualsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent intent = new Intent(getApplicationContext(),EditIndividual.class);
-                intent.putExtra("INDIVIDUAL_ID",String.valueOf(values.get(position).getId()));
-
-                startActivity(intent);
-            }
-        });
+        final ListView labelsList = (ListView)(findViewById(R.id.list_labels));
+        labelsList.setAdapter(adapter);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_view_individuals, menu);
+        getMenuInflater().inflate(R.menu.menu_view_labels, menu);
         return true;
     }
 
@@ -72,10 +60,8 @@ public class ViewIndividuals extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public void moveToAddNewIndividual(View view){
-        Intent intent = new Intent(this,NewIndividual.class);
+    public void moveToAddNewLabel(View view){
+        Intent intent = new Intent(this,NewLabel.class);
         startActivity(intent);
-
-
     }
 }
